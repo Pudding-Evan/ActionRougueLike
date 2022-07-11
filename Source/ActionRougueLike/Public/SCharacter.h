@@ -8,6 +8,8 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class USInteractionComponent;
+class UAnimMontage;
 
 UCLASS()
 class ACTIONROUGUELIKE_API ASCharacter : public ACharacter
@@ -29,6 +31,13 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
 
+	USInteractionComponent* InteractionComp;
+
+	UPROPERTY(EditAnywhere,Category = "Attack")
+	UAnimMontage* AttackAnim;
+
+	FTimerHandle TimerHandle_PrimaryAtack;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
@@ -37,6 +46,10 @@ protected:
 	void MoveRight(float value);
 
 	void PrimaryAttack();
+
+	void PrimaryInteract();
+
+	void PrimaryAttack_TimeElapsed();
 	
 public:	
 	// Called every frame
