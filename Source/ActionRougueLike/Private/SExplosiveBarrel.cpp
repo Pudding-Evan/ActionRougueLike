@@ -63,6 +63,7 @@ void ASExplosiveBarrel::OnActorHit(UPrimitiveComponent* HitComponent, AActor* Ot
 
 	FString CombineString = FString::Printf(TEXT("Hit at location %s"), *Hit.ImpactPoint.ToString());
 	DrawDebugString(GetWorld(), Hit.ImpactPoint, CombineString, nullptr,FColor::Green,2.0f,true);
+
 }
 
 // Called every frame

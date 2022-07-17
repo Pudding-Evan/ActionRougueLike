@@ -6,6 +6,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SInteractionComponent.h"
+#include "SAttributeComponent.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -22,6 +23,7 @@ ASCharacter::ASCharacter()
 	CameraComp->SetupAttachment(SprintArmComp);
 
 	InteractionComp = CreateDefaultSubobject<USInteractionComponent>("InteractionComp");
+	AttributeComp = CreateDefaultSubobject<USAttributeComponent>("AttributeComp");
 
 	GetCharacterMovement()->bOrientRotationToMovement = true; // 旋转角色到移动方向上
 	bUseControllerRotationYaw = false; // 我们要自己来控制角色的yaw旋转·1
@@ -31,6 +33,7 @@ ASCharacter::ASCharacter()
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 
@@ -74,16 +77,18 @@ void ASCharacter::PrimaryInteract()
 
 void ASCharacter::PrimaryAttack_TimeElapsed()
 {
+	if (ensure(ProjectileClass)) // 声明是否为true 用ensure 如果false，会出发断言
+	{
+		FVector HandleLocation = GetMesh()->GetSocketLocation("Muzzle_01");
 
-	FVector HandleLocation = GetMesh()->GetSocketLocation("Muzzle_01");
+		FTransform SpawnTM = FTransform(GetControlRotation(), HandleLocation);
 
-	FTransform SpawnTM = FTransform(GetControlRotation(), HandleLocation);
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		SpawnParams.Instigator = this;
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	SpawnParams.Instigator = this;
-
-	GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+		GetWorld()->SpawnActor<AActor>(ProjectileClass, SpawnTM, SpawnParams);
+	}
 }
 
 // Called every frame
